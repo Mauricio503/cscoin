@@ -53,7 +53,7 @@
 using namespace std;
 
 #if defined(NDEBUG)
-# error "Flux cannot be compiled without assertions."
+# error "CS Coin cannot be compiled without assertions."
 #endif
 
 #include "librustzcash.h"
@@ -119,7 +119,7 @@ static void CheckBlockIndex(const Consensus::Params& consensusParams);
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Zelcash Signed Message:\n";
+const string strMessageMagic = "CS Coin Signed Message:\n";
 
 
 // Internal stuff

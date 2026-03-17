@@ -49,10 +49,10 @@ static int AppInitRawTx(int argc, char* argv[])
     if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help"))
     {
         // First part of help message is specific to this utility
-        std::string strUsage = _("Flux flux-tx utility version") + " " + FormatFullVersion() + "\n\n" +
+        std::string strUsage = _("CS Coin cs-tx utility version") + " " + FormatFullVersion() + "\n\n" +
             _("Usage:") + "\n" +
-              "  flux-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded flux transaction") + "\n" +
-              "  flux-tx [options] -create [commands]   " + _("Create hex-encoded flux transaction") + "\n" +
+              "  cs-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded CS Coin transaction") + "\n" +
+              "  cs-tx [options] -create [commands]   " + _("Create hex-encoded CS Coin transaction") + "\n" +
               "\n";
 
         fprintf(stdout, "%s", strUsage.c_str());

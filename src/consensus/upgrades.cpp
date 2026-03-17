@@ -13,7 +13,7 @@ const struct NUInfo NetworkUpgradeInfo[Consensus::MAX_NETWORK_UPGRADES] = {
     {
         /*.nBranchId =*/ 0,
         /*.strName =*/ "Base",
-        /*.strInfo =*/ "The Zelcash network at launch",
+        /*.strInfo =*/ "The CS Coin network at launch",
     },
     {
         /*.nBranchId =*/ 0x74736554,
@@ -23,37 +23,37 @@ const struct NUInfo NetworkUpgradeInfo[Consensus::MAX_NETWORK_UPGRADES] = {
      {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "LWMA",
-        /*.strInfo =*/ "Zelcash upgraded to LWMA difficulty algorithm",
+        /*.strInfo =*/ "CS Coin upgraded to LWMA difficulty algorithm",
     },
      {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "Equihash 144/5",
-        /*.strInfo =*/ "Zelcash PoW Change to Equihash 144/5",
-    },	
+        /*.strInfo =*/ "CS Coin PoW Change to Equihash 144/5",
+    },
     {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "Acadia",
-        /*.strInfo =*/ "The Zelcash Acadia Update",
+        /*.strInfo =*/ "CS Coin Acadia Update",
     },
     {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "Kamiooka",
-        /*.strInfo =*/ "Zel Kamiooka Upgrade, PoW change to ZelHash and update for ZelNodes",
+        /*.strInfo =*/ "CS Coin Kamiooka Upgrade, PoW change to ZelHash and update for Nodes",
     },
     {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "Kamata",
-        /*.strInfo =*/ "Zel Kamata Upgrade, Deterministic ZelNodes and ZelFlux",
+        /*.strInfo =*/ "CS Coin Kamata Upgrade, Deterministic Nodes",
     },
     {
         /*.nBranchId =*/ 0x76b809bb,
-        /*.strName =*/ "Flux",
-        /*.strInfo =*/ "Flux Upgrade, Multiple chains",
+        /*.strName =*/ "CS Coin",
+        /*.strInfo =*/ "CS Coin Upgrade, Multiple chains",
     },
     {
         /*.nBranchId =*/ 0x76b809bb,
         /*.strName =*/ "Halving",
-        /*.strInfo =*/ "Flux Halving",
+        /*.strInfo =*/ "CS Coin Halving",
     },
     {
             /*.nBranchId =*/ 0x76b809bb,
