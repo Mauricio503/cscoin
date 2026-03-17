@@ -457,7 +457,7 @@ static std::string FormatException(const std::exception* pex, const char* pszThr
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "Zelcash"; // "Zelcash" is now known as "Flux"
+    const char* pszModule = "Zelcash"; // "Zelcash" is now known as "CS"
 #endif
     if (pex)
         return strprintf(
@@ -497,10 +497,10 @@ boost::filesystem::path GetDefaultDataDirForCoinName(const std::string &coinName
     // Mac
     return pathRet / "Library/Application Support" / coinName;
 #else
-    std::string flux_lowercase = "flux";
+    std::string flux_lowercase = "cs";
     std::string zelcash_lowercase = "zelcash";
     // Unix
-    if (coinName == "Flux")
+    if (coinName == "CS")
         return pathRet / ("." + flux_lowercase);
 
     return pathRet / ("." + zelcash_lowercase);
@@ -513,7 +513,7 @@ boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
 
-    fs::path fluxDefaultDir = GetDefaultDataDirForCoinName("Flux");
+    fs::path fluxDefaultDir = GetDefaultDataDirForCoinName("CS");
     if (!fs::is_directory(fluxDefaultDir)) {
         // try "zelcash" in case we're upgrading from pre-firo version
         fs::path zelcashDefaultDir = GetDefaultDataDirForCoinName("Zelcash");
@@ -633,14 +633,14 @@ bool RenameDirectoriesFromZelcashToFlux()
     namespace fs = boost::filesystem;
 
     fs::path zelcashPath = GetDefaultDataDirForCoinName("Zelcash");
-    fs::path fluxPath = GetDefaultDataDirForCoinName("Flux");
+    fs::path fluxPath = GetDefaultDataDirForCoinName("CS");
 
     // rename is possible only if zcoin directory exists and firo doesn't
     if (fs::exists(fluxPath) || !fs::is_directory(zelcashPath))
         return false;
 
     fs::path zelcashConfFileName = zelcashPath / "zelcash.conf";
-    fs::path fluxConfFileName = zelcashPath / "flux.conf";
+    fs::path fluxConfFileName = zelcashPath / "cs.conf";
     if (fs::exists(fluxConfFileName))
         return false;
 
@@ -673,23 +673,19 @@ void ClearDatadirCache()
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathFluxConfigFile(GetArg("-conf", "flux.conf"));
     boost::filesystem::path dataDir = GetDataDir(false);
-    if (!pathFluxConfigFile.is_complete()) {
-        pathFluxConfigFile = dataDir / pathFluxConfigFile;
+
+    // Prioridade: cs.conf → flux.conf (legado) → zelcash.conf (legado)
+    for (const std::string& name : {"cs.conf", "flux.conf", "zelcash.conf"}) {
+        boost::filesystem::path p(GetArg("-conf", name));
+        if (!p.is_complete()) p = dataDir / p;
+        if (boost::filesystem::ifstream(p).good()) return p;
     }
 
-    boost::filesystem::ifstream streamConfig(pathFluxConfigFile);
-    if (streamConfig.good()) {
-        return pathFluxConfigFile;
-    }
-
-    boost::filesystem::path pathZelcashConfigFile(GetArg("-conf", "zelcash.conf"));
-    if (!pathZelcashConfigFile.is_complete()) {
-        pathZelcashConfigFile = dataDir / pathZelcashConfigFile;
-    }
-
-    return pathZelcashConfigFile;
+    // Padrão: cs.conf (será criado se necessário)
+    boost::filesystem::path pathDefault(GetArg("-conf", "cs.conf"));
+    if (!pathDefault.is_complete()) pathDefault = dataDir / pathDefault;
+    return pathDefault;
 }
 
 boost::filesystem::path GetFluxnodeConfigFile()
@@ -1023,8 +1019,8 @@ void SetThreadPriority(int nPriority)
 std::string PrivacyInfo()
 {
     return "\n" +
-           FormatParagraph(strprintf(_("In order to ensure you are adequately protecting your privacy when using Flux, please see <%s>."),
-                                     "https://github.com/RunOnFlux/fluxd/")) + "\n";
+           FormatParagraph(strprintf(_("In order to ensure you are adequately protecting your privacy when using CS Coin, please see <%s>."),
+                                     "https://github.com/criasystem/cscoin/")) + "\n";
 }
 
 std::string VersionInfo()

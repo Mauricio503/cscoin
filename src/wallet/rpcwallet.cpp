@@ -118,10 +118,10 @@ string AccountFromValue(const UniValue& value)
     return strAccount;
 }
 
-// Use the default change address from flux.conf
+// Use the default change address from cs.conf
 // If we aren't sending from a specific address
 // We can use a default change address that the user can provide
-// in the flux.conf
+// in the cs.conf
 void CheckAndAssignDefaultChangeAddress(CCoinControl& coinControl)
 {
     if (coinControl.fFromOnlyIsSet == false) {
@@ -431,7 +431,7 @@ static void SendMoney(const CTxDestination &address, CAmount nValue, bool fSubtr
     }
 
     // We can use a default change address that the user can provide
-    // in the flux.conf
+    // in the cs.conf
     CheckAndAssignDefaultChangeAddress(coinControl);
 
     CRecipient recipient = {scriptPubKey, nValue, fSubtractFeeFromAmount};
@@ -1212,7 +1212,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     }
 
     //We can use a default change address that the user can provide
-    // in the flux.conf
+    // in the cs.conf
     CheckAndAssignDefaultChangeAddress(coinControl);
 
     CReserveKey keyChange(pwalletMain);
@@ -2262,7 +2262,7 @@ UniValue encryptwallet(const UniValue& params, bool fHelp)
     // slack space in .dat files; that is bad if the old data is
     // unencrypted private keys. So:
     StartShutdown();
-    return "wallet encrypted; Flux server stopping, restart to run with encrypted wallet. The keypool has been flushed, you need to make a new backup.";
+    return "wallet encrypted; CS server stopping, restart to run with encrypted wallet. The keypool has been flushed, you need to make a new backup.";
 }
 
 UniValue lockunspent(const UniValue& params, bool fHelp)

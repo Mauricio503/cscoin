@@ -247,13 +247,13 @@ UniValue stop(const UniValue& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop Flux server.");
+            "\nStop CS server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     if (fFluxStartedBench)
         StopFluxBenchd();
     StartShutdown();
-    return "Flux server stopping";
+    return "CS server stopping";
 }
 
 /**
@@ -476,7 +476,7 @@ string experimentalDisabledHelpMsg(const string& rpc, const string& enableArg)
     return "\nWARNING: " + rpc + " is disabled.\n"
         "To enable it, restart fluxd with the -experimentalfeatures and\n"
         "-" + enableArg + " commandline options, or add these two lines\n"
-        "to the flux.conf file:\n\n"
+        "to the cs.conf file:\n\n"
         "experimentalfeatures=1\n"
         + enableArg + "=1\n";
 }

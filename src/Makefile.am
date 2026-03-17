@@ -80,11 +80,11 @@ noinst_PROGRAMS =
 TESTS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += fluxd
+  bin_PROGRAMS += csd
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += flux-cli flux-tx
+  bin_PROGRAMS += cs-cli cs-tx
 endif
 
 LIBFLUX_H = \
@@ -238,7 +238,7 @@ obj/build.h: FORCE
 	  $(abs_top_srcdir)
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: fluxd
+# server: csd
 libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_server_a_SOURCES = \
@@ -308,7 +308,7 @@ libbitcoin_proton_a_SOURCES = \
   amqp/amqppublishnotifier.cpp
 endif
 
-# wallet: fluxd, but only linked when wallet enabled
+# wallet: csd, but only linked when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_wallet_a_SOURCES = \
@@ -365,7 +365,7 @@ crypto_libbitcoin_crypto_a_SOURCES += \
   ${EQUIHASH_TROMP_SOURCES}
 endif
 
-# common: shared between fluxd and non-server tools
+# common: shared between csd and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -438,17 +438,17 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# fluxd binary #
-fluxd_SOURCES = fluxd.cpp
-fluxd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-fluxd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-fluxd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# csd binary #
+csd_SOURCES = fluxd.cpp
+csd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+csd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+csd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-fluxd_SOURCES += fluxd-res.rc
+csd_SOURCES += fluxd-res.rc
 endif
 
-fluxd_LDADD = \
+csd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
@@ -462,7 +462,7 @@ fluxd_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-fluxd_LDADD += \
+csd_LDADD += \
   $(BOOST_LIBS) \
   $(BDB_LIBS) \
   $(SSL_LIBS) \
@@ -475,16 +475,16 @@ fluxd_LDADD += \
   $(LIBFLUX_LIBS)
 
 # flux-cli binary #
-flux_cli_SOURCES = flux-cli.cpp
-flux_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-flux_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-flux_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+cs_cli_SOURCES = flux-cli.cpp
+cs_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+cs_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cs_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-flux_cli_SOURCES += flux-cli-res.rc
+cs_cli_SOURCES += flux-cli-res.rc
 endif
 
-flux_cli_LDADD = \
+cs_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
@@ -497,18 +497,17 @@ flux_cli_LDADD = \
   $(LIBFLUX_LIBS)
 #
 
-# flux-tx binary #
-flux_tx_SOURCES = flux-tx.cpp
-flux_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-flux_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-flux_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# cs-tx binary #
+cs_tx_SOURCES = flux-tx.cpp
+cs_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+cs_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+cs_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-flux_tx_SOURCES += flux-tx-res.rc
+cs_tx_SOURCES += flux-tx-res.rc
 endif
 
-# FIXME: Is libflux needed for zelcash_tx?
-flux_tx_LDADD = \
+cs_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -517,7 +516,7 @@ flux_tx_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBFLUX_LIBS)
 
-flux_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+cs_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # zelcash protocol primitives #
