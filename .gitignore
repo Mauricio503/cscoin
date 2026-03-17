@@ -16,6 +16,11 @@ src/flux-cli
 src/flux-gtest
 src/flux-tx
 
+src/csd
+src/cs-cli
+src/cs-gtest
+src/cs-tx
+
 *fluxTest.pk
 *fluxTest.vk
 
