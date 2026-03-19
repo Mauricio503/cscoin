@@ -1958,7 +1958,17 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         strPath = GetSelfPath();
         LogPrintf("Path: %s\n",strPath);
        
-         if (FindBenchmarkPath("fluxbenchd",strPath)) {
+         if (FindBenchmarkPath("csbenchd", strPath)) {
+
+            LogPrintf("Found csbenchd in %s\n",strPath);
+
+            if (FindBenchmarkPath("csbench-cli",strPath)) {
+                 LogPrintf("Found csbench-cli in %s\n",strPath);
+            } else {
+                 return InitError("Failed to find benchmark cli application (csbench-cli)");
+            }
+
+        } else if (FindBenchmarkPath("fluxbenchd",strPath)) {
 
             LogPrintf("Found fluxbenchd in %s\n",strPath);
 
@@ -1973,7 +1983,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
              if (FindBenchmarkPath("zelbenchd", strPath)) {
                   LogPrintf("Found zelbenchd in %s\n",strPath);
              } else {
-                 return InitError("Failed to find benchmark application");
+                 return InitError("Failed to find benchmark application (csbenchd/fluxbenchd/zelbenchd)");
              }
 
              if (FindBenchmarkPath("zelbench-cli", strPath)) {

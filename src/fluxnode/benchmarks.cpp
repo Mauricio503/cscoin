@@ -65,7 +65,10 @@ bool FindBenchmarkPath(std::string filename, std::string file_path )
 
 std::string GetBenchCliPath()
 {
-   
+    if (FindBenchmarkPath("csbench-cli", strPath)) {
+        return strPath + "/csbench-cli ";
+    }
+
     if (FindBenchmarkPath("fluxbench-cli", strPath)) {
         return strPath + "/fluxbench-cli ";
     }
@@ -74,13 +77,17 @@ std::string GetBenchCliPath()
         return strPath + "/zelbench-cli ";
     }
 
-    return strPath + "/fluxbench-cli ";
+    return strPath + "/csbench-cli ";
 
 }
 
 std::string GetBenchDaemonPath()
 {
     // The space at the end is so parameters can be added easily
+    if (FindBenchmarkPath("csbenchd", strPath)) {
+        return strPath + "/csbenchd ";
+    }
+
     if (FindBenchmarkPath("fluxbenchd", strPath)) {
        return strPath + "/fluxbenchd ";
     }
@@ -89,7 +96,7 @@ std::string GetBenchDaemonPath()
         return strPath + "/zelbenchd ";
     }
 
-    return strPath + "/fluxbenchd ";
+    return strPath + "/csbenchd ";
 
 }
 

@@ -32,7 +32,7 @@ bool FluxnodeConfig::read(std::string& strErr)
         if (configFile != NULL) {
             std::string strHeader = "# Fluxnode config file\n"
                                     "# Format: alias IP:port zelnodeprivkey collateral_output_txid collateral_output_index\n"
-                                    "# Example: zn1 127.0.0.2:16125 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0\n";
+                                    "# Example: zn1 127.0.0.2:26125 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0\n";
             fwrite(strHeader.c_str(), std::strlen(strHeader.c_str()), 1, configFile);
             fclose(configFile);
         }
@@ -73,18 +73,19 @@ bool FluxnodeConfig::read(std::string& strErr)
         }
 
 
+        int defaultPort = Params().GetDefaultPort();
         if (Params().NetworkID() == CBaseChainParams::MAIN) {
-            if (port != 16125) {
+            if (port != defaultPort) {
                 strErr = _("Invalid port detected in zelnode.conf") + "\n" +
                          strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
-                         _("(must be 51472 for mainnet)");
+                         strprintf(_("(must be %d for mainnet)"), defaultPort);
                 streamConfig.close();
                 return false;
             }
-        } else if (port == 16125) {
+        } else if (port == Params(CBaseChainParams::MAIN).GetDefaultPort()) {
             strErr = _("Invalid port detected in zelnode.conf") + "\n" +
                      strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
-                     _("(16125 could be used only on mainnet)");
+                     strprintf(_("(%d can only be used on mainnet)"), port);
             streamConfig.close();
             return false;
         }
