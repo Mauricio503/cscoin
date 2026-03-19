@@ -83,6 +83,7 @@ public:
         consensus.nPowTargetSpacing = 2 * 60; // 2 minutos por bloco
 
         // Upgrades: BASE_SPROUT ativo desde genesis (obrigatorio).
+        
         // Os demais ativam no bloco 1 para que o genesis (bloco 0) passe
         // a validacao com transacao v1 (nao-overwintered).
         consensus.vUpgrades[Consensus::BASE_SPROUT].nProtocolVersion = 170002;
