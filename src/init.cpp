@@ -1953,8 +1953,8 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         }
     }
 
-    if (fFluxnode) {
-        
+    if (fFluxnode && !fArcane) {
+
         strPath = GetSelfPath();
         LogPrintf("Path: %s\n",strPath);
        

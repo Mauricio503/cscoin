@@ -12,6 +12,9 @@
  * IPv4 as well as onion addresses are wrapped inside a IPv6 address accordingly.
  */
 static SeedSpec6 pnSeed6_main[] = {
+    // 192.168.3.109:26125 — seed de teste (substituir por IP público em produção)
+    // IPv4-mapped: ::ffff:c0a8:036d  port 26125 (0x660d)
+    {{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xc0,0xa8,0x03,0x6d}, 26125},
 };
 
 static SeedSpec6 pnSeed6_test[] = {
