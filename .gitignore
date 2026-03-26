@@ -484,4 +484,4 @@ qa/pull-tester/test.*/*
 libzcashconsensus.pc
 
 contrib/debian/files
-contrib/debian/substvars
+contrib/debian/substvars.mcp.json
