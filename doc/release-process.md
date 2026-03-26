@@ -16,11 +16,11 @@ is a common reason.)
 
 Check that dependencies are properly hosted by looking at the `check-depends` builder:
 
-  https://ci.zel.cash/#/builders/1
+  https://ci.cscoin.io/#/builders/1
 
 Check that there are no surprising performance regressions:
 
-  https://speed.zel.cash
+  https://speed.cscoin.io
 
 Ensure that new performance metrics appear on that site.
 
@@ -78,7 +78,7 @@ Review the automated changes in git:
 
 Push the resulting branch to github:
 
-    $ git push 'git@github.com:$YOUR_GITHUB_NAME/flux' $(git rev-parse --abbrev-ref HEAD)
+    $ git push 'git@github.com:$YOUR_GITHUB_NAME/cscoin' $(git rev-parse --abbrev-ref HEAD)
 
 Then create the PR on github. Complete the standard review process,
 then merge, then wait for CI to complete.
@@ -111,14 +111,14 @@ Enter "Release <version>." and save when prompted for a commit message.
 
 ## Make and deploy deterministic builds
 
-- Run the [Gitian deterministic build environment](https://github.com/runonflux/flux-gitian)
-- Compare the uploaded [build manifests on gitian.sigs](https://github.com/runonflux/gitian.sigs)
+- Run the [Gitian deterministic build environment](https://github.com/Mauricio503/cs-gitian)
+- Compare the uploaded [build manifests on gitian.sigs](https://github.com/Mauricio503/gitian.sigs)
 - If all is well, the DevOps engineer will build the Debian packages and update the
-  [apt.zel.cash package repository](https://apt.zel.cash).
+  [packages.cscoin.io package repository](https://packages.cscoin.io).
 
 ## Add release notes to GitHub
 
-- Go to the [GitHub tags page](https://github.com/runonflux/fluxd/tags).
+- Go to the [GitHub tags page](https://github.com/Mauricio503/cscoin/tags).
 - Click "Add release notes" beside the tag for this release.
 - Copy the release blog post into the release description, and edit to suit
   publication on GitHub. See previous release notes for examples.
@@ -136,21 +136,21 @@ the marking to see what GitHub wants to be done.
 
 ### Deploy testnet
 
-Notify the Flux DevOps engineer/sysadmin that the release has been tagged. They update some variables in the company's automation code and then run an Ansible playbook, which:
+Notify the CS Coin DevOps engineer/sysadmin that the release has been tagged. They update some variables in the company's automation code and then run an Ansible playbook, which:
 
-* builds Flux based on the specified branch
-* deploys it as a public service (e.g. betatestnet.zel.cash, mainnet.zel.cash)
+* builds CS Coin based on the specified branch
+* deploys it as a public service (e.g. betatestnet.cscoin.io, mainnet.cscoin.io)
 * often the same server can be re-used, and the role idempotently handles upgrades, but if not then they also need to update DNS records
 * possible manual steps: blowing away the `testnet3` dir, deleting old parameters, restarting DNS seeder
 
-Then, verify that nodes can connect to the testnet server, and update the guide on the wiki to ensure the correct hostname is listed in the recommended flux.conf.
+Then, verify that nodes can connect to the testnet server, and update the guide on the wiki to ensure the correct hostname is listed in the recommended cs.conf.
 
 ### Update the 1.0 User Guide
 
-This also means updating [the translations](https://github.com/runonflux/flux-docs).
+This also means updating [the translations](https://github.com/Mauricio503/cscoin-docs).
 Coordinate with the translation team for now. Suggestions for improving this
 part of the process should be added to #2596.
 
-### Publish the release announcement (blog, github, flux-dev, slack)
+### Publish the release announcement (blog, github, cscoin-dev, slack)
 
 ## Celebrate

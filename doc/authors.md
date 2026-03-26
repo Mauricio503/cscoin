@@ -1,4 +1,4 @@
-Flux Contributors
+CS Coin Contributors
 ==================
 
 Jeremy "Blondfrogs" Anderson (185)

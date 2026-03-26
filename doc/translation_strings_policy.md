@@ -1,4 +1,4 @@
-*** Warning: This document has not been updated for Flux and may be inaccurate. ***
+*** Warning: This document has not been updated for CS Coin and may be inaccurate. ***
 
 Translation Strings Policy
 ===========================
