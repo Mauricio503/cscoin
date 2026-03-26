@@ -484,4 +484,17 @@ qa/pull-tester/test.*/*
 libzcashconsensus.pc
 
 contrib/debian/files
-contrib/debian/substvars.mcp.json
+contrib/debian/substvars
+.mcp.json
+
+# Arquivos sensíveis — nunca commitar
+.env
+.env.*
+*.key
+*.pem
+*.seed
+*.p12
+*.pfx
+wallet.dat
+csnode.yaml
+*credentials*
