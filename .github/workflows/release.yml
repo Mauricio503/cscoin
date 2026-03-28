@@ -36,11 +36,7 @@ jobs:
 
       - name: Build CS Coin
         run: |
-          ./autogen.sh
-          ./configure \
-            --disable-tests --disable-bench --disable-gui-tests \
-            --without-gui --without-miniupnpc --with-incompatible-bdb
-          make -j$(nproc)
+          ./zcutil/build.sh -j$(nproc)
 
       - name: Package csd
         run: |
