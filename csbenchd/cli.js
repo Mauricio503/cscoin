@@ -15,8 +15,8 @@
 
 const http = require('http');
 
-const MAINNET_PORT = 16225;
-const TESTNET_PORT = 16235;
+const MAINNET_PORT = 26225;
+const TESTNET_PORT = 26235;
 
 // Filter -testnet from args; let remaining args be command + params
 const rawArgs   = process.argv.slice(2);

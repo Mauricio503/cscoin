@@ -1884,7 +1884,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             MilliSleep(10);
     }
 
-    fFluxnode = GetBoolArg("-zelnode", false);
+    fFluxnode = GetBoolArg("-csnode", false) || GetBoolArg("-zelnode", false);
     fArcane = getenv("UNMANAGED_FLUXBENCHD") != NULL;
 
     if ((fFluxnode || fluxnodeConfig.getCount() > -1) && fTxIndex == false) {
@@ -1900,7 +1900,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (fFluxnode) {
         LogPrintf("IS FLUXNODE\n");
-        strFluxnodeAddr = GetArg("-zelnodeaddr", "");
+        strFluxnodeAddr = GetArg("-csnodeaddr", GetArg("-zelnodeaddr", ""));
 
         LogPrintf(" addr %s\n", strFluxnodeAddr.c_str());
 
@@ -1911,9 +1911,9 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             }
         }
 
-        std::string strHash = GetArg("-zelnodeoutpoint", "");
+        std::string strHash = GetArg("-csnodeoutpoint", GetArg("-zelnodeoutpoint", ""));
         uint256 hash = uint256S(strHash);
-        int index = GetArg("-zelnodeindex", -1);
+        int index = GetArg("-csnodeindex", GetArg("-zelnodeindex", -1));
 
         fluxnodeOutPoint = COutPoint(hash, index);
 
@@ -1923,7 +1923,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
         activeFluxnode.deterministicOutPoint = fluxnodeOutPoint;
 
-        strFluxnodePrivKey = GetArg("-zelnodeprivkey", "");
+        strFluxnodePrivKey = GetArg("-csnodeprivkey", GetArg("-zelnodeprivkey", ""));
         if (!strFluxnodePrivKey.empty()) {
             std::string errorMessage;
 
@@ -1953,10 +1953,16 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         }
     }
 
-    if (fFluxnode && !fArcane) {
+    if (fFluxnode) {
 
         strPath = GetSelfPath();
         LogPrintf("Path: %s\n",strPath);
+
+    }
+
+    if (fFluxnode && !fArcane) {
+
+        // strPath already set above
        
          if (FindBenchmarkPath("csbenchd", strPath)) {
 

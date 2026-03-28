@@ -4,8 +4,8 @@
 // ============================================================
 // CS Coin Benchmark Daemon (csbenchd)
 // Validates node hardware and signs confirmation transactions.
-// Communicates via HTTP RPC on 127.0.0.1:16225 (mainnet)
-//                                or 127.0.0.1:16235 (testnet)
+// Communicates via HTTP RPC on 0.0.0.0:26225 (mainnet)
+//                                or 0.0.0.0:26235 (testnet)
 // ============================================================
 
 const http     = require('http');
@@ -20,8 +20,8 @@ const ec = new EC('secp256k1');
 
 // ---- Configuration --------------------------------------------------
 const VERSION             = '1.0.0';
-const MAINNET_PORT        = 16225;
-const TESTNET_PORT        = 16235;
+const MAINNET_PORT        = 26225;
+const TESTNET_PORT        = 26235;
 const KEY_DIR             = path.join(os.homedir(), '.csbenchmark');
 const KEY_FILE            = path.join(KEY_DIR, 'benchmark.key');
 const LOG_FILE            = path.join(KEY_DIR, 'debug.log');
@@ -417,8 +417,8 @@ function startServer() {
         });
     });
 
-    httpServer.listen(PORT, '127.0.0.1', () => {
-        log(`CS Coin Benchmark Daemon v${VERSION} listening on 127.0.0.1:${PORT}${isTestnet ? ' (testnet)' : ''}`);
+    httpServer.listen(PORT, '0.0.0.0', () => {
+        log(`CS Coin Benchmark Daemon v${VERSION} listening on 0.0.0.0:${PORT}${isTestnet ? ' (testnet)' : ''}`);
     });
 
     httpServer.on('error', (err) => {
