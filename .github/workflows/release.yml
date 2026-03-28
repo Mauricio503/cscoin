@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Extract version from tag
         id: version
@@ -32,20 +34,10 @@ jobs:
             libminiupnpc-dev libzmq3-dev \
             curl wget git python3
 
-      - name: Cache depends
-        uses: actions/cache@v4
-        with:
-          path: depends/built
-          key: depends-${{ runner.os }}-${{ hashFiles('depends/packages/*.mk') }}
-          restore-keys: depends-${{ runner.os }}-
-
-      - name: Build depends
-        run: make -C depends -j$(nproc) HOST=x86_64-linux-gnu
-
       - name: Build CS Coin
         run: |
           ./autogen.sh
-          ./configure --prefix=$(pwd)/depends/x86_64-linux-gnu \
+          ./configure \
             --disable-tests --disable-bench --disable-gui-tests \
             --without-gui --without-miniupnpc
           make -j$(nproc)
