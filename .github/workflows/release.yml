@@ -36,7 +36,14 @@ jobs:
 
       - name: Build CS Coin
         run: |
-          ./zcutil/build.sh -j$(nproc)
+          ./autogen.sh
+          ./configure \
+            BDB_LIBS="-L/usr/lib/x86_64-linux-gnu -ldb_cxx" \
+            BDB_CFLAGS="-I/usr/include" \
+            --with-incompatible-bdb \
+            --disable-tests --disable-bench --disable-gui-tests \
+            --without-gui --without-miniupnpc
+          make -j$(nproc)
 
       - name: Package csd
         run: |
