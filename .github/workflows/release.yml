@@ -31,7 +31,7 @@ jobs:
             libboost-system-dev libboost-filesystem-dev \
             libboost-chrono-dev libboost-program-options-dev \
             libboost-test-dev libboost-thread-dev \
-            libminiupnpc-dev libzmq3-dev \
+            libminiupnpc-dev libzmq3-dev libdb++-dev \
             curl wget git python3
 
       - name: Build CS Coin
@@ -39,7 +39,7 @@ jobs:
           ./autogen.sh
           ./configure \
             --disable-tests --disable-bench --disable-gui-tests \
-            --without-gui --without-miniupnpc
+            --without-gui --without-miniupnpc --with-incompatible-bdb
           make -j$(nproc)
 
       - name: Package csd
