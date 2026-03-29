@@ -447,6 +447,7 @@ ASALocalRun/
 
 # Compilation
 Makefile
+!depends/Makefile
 
 # Unit-tests
 Makefile.test
