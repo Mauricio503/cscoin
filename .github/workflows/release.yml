@@ -43,13 +43,15 @@ jobs:
       - name: Build depends (includes Berkeley DB 6.2)
         run: |
           ls depends/Makefile  # confirma que o Makefile existe no checkout
-          make -C depends -j$(nproc) HOST=x86_64-linux-gnu
+          DEPENDS_HOST=$(./depends/config.guess)
+          make -C depends -j$(nproc) HOST=$DEPENDS_HOST
+          echo "DEPENDS_HOST=$DEPENDS_HOST" >> $GITHUB_ENV
 
       - name: Build CS Coin
         run: |
           ./autogen.sh
           ./configure \
-            --prefix=$(pwd)/depends/x86_64-linux-gnu \
+            --prefix=$(pwd)/depends/${{ env.DEPENDS_HOST }} \
             --with-incompatible-bdb \
             --disable-tests --disable-bench --disable-gui-tests \
             --without-gui --without-miniupnpc
