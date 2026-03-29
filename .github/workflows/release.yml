@@ -44,7 +44,7 @@ jobs:
         run: |
           ls depends/Makefile  # confirma que o Makefile existe no checkout
           DEPENDS_HOST=$(./depends/config.guess)
-          make -C depends -j$(nproc) HOST=$DEPENDS_HOST
+          make -C depends -j$(nproc) HOST=$DEPENDS_HOST NO_PROTON=1
           echo "DEPENDS_HOST=$DEPENDS_HOST" >> $GITHUB_ENV
 
       - name: Build CS Coin
@@ -54,7 +54,8 @@ jobs:
             --prefix=$(pwd)/depends/${{ env.DEPENDS_HOST }} \
             --with-incompatible-bdb \
             --disable-tests --disable-bench --disable-gui-tests \
-            --without-gui --without-miniupnpc
+            --without-gui --without-miniupnpc \
+            --disable-proton
           make -j$(nproc)
 
       - name: Package csd
