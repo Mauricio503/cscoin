@@ -31,15 +31,25 @@ jobs:
             libboost-system-dev libboost-filesystem-dev \
             libboost-chrono-dev libboost-program-options-dev \
             libboost-test-dev libboost-thread-dev \
-            libminiupnpc-dev libzmq3-dev libdb++-dev \
+            libminiupnpc-dev libzmq3-dev \
             curl wget git python3
+
+      - name: Cache depends
+        uses: actions/cache@v4
+        with:
+          path: depends/built
+          key: depends-ubuntu22-${{ hashFiles('depends/packages/*.mk') }}
+
+      - name: Build depends (includes Berkeley DB 6.2)
+        run: |
+          ls depends/Makefile  # confirma que o Makefile existe no checkout
+          make -C depends -j$(nproc) HOST=x86_64-linux-gnu
 
       - name: Build CS Coin
         run: |
           ./autogen.sh
           ./configure \
-            BDB_LIBS="-L/usr/lib/x86_64-linux-gnu -ldb_cxx" \
-            BDB_CFLAGS="-I/usr/include" \
+            --prefix=$(pwd)/depends/x86_64-linux-gnu \
             --with-incompatible-bdb \
             --disable-tests --disable-bench --disable-gui-tests \
             --without-gui --without-miniupnpc
