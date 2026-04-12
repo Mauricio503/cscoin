@@ -897,6 +897,13 @@ struct CMutableTransaction
     int32_t nFluxTxVersion; // Adding this field for further upgradability to fluxnode txes in the future
     CScript P2SHRedeemScript;
 
+    // CSApp Tx Version 7 — decentralised app specs on-chain
+    std::string csappDeploymentId;
+    std::string csappOwner;
+    std::string csappSpecJson;
+    std::string csappIp;
+    CAmount csappLockedAmount;
+    std::vector<unsigned char> csappSig;
 
     CMutableTransaction();
     CMutableTransaction(const CTransaction& tx);
@@ -991,6 +998,20 @@ struct CMutableTransaction
                     READWRITE(benchmarkSig);
                 }
             }
+            return;
+        } else if (nVersion == CSAPP_TX_VERSION) {
+            READWRITE(nType);
+            READWRITE(csappDeploymentId);
+            READWRITE(csappOwner);
+            if (nType == CSAPP_REGISTER_TX_TYPE) {
+                READWRITE(csappSpecJson);
+                READWRITE(csappIp);
+                READWRITE(csappLockedAmount);
+            } else if (nType == CSAPP_UPDATE_TX_TYPE) {
+                READWRITE(csappSpecJson);
+            }
+            if (!(s.GetType() & SER_GETHASH))
+                READWRITE(csappSig);
             return;
         }
 

@@ -202,7 +202,7 @@ std::string CTxOut::ToString() const
     return strprintf("CTxOut(nValue=%d.%08d, scriptPubKey=%s)", nValue / COIN, nValue % COIN, HexStr(scriptPubKey).substr(0, 30));
 }
 
-CMutableTransaction::CMutableTransaction() : nVersion(CTransaction::SPROUT_MIN_CURRENT_VERSION), fOverwintered(false), nVersionGroupId(0), nExpiryHeight(0), nLockTime(0), valueBalance(0) {}
+CMutableTransaction::CMutableTransaction() : nVersion(CTransaction::SPROUT_MIN_CURRENT_VERSION), fOverwintered(false), nVersionGroupId(0), nExpiryHeight(0), nLockTime(0), valueBalance(0), csappLockedAmount(0) {}
 CMutableTransaction::CMutableTransaction(const CTransaction& tx) : nVersion(tx.nVersion), fOverwintered(tx.fOverwintered), nVersionGroupId(tx.nVersionGroupId), nExpiryHeight(tx.nExpiryHeight),
                                                                    vin(tx.vin), vout(tx.vout), nLockTime(tx.nLockTime),
                                                                    valueBalance(tx.valueBalance), vShieldedSpend(tx.vShieldedSpend), vShieldedOutput(tx.vShieldedOutput),
@@ -210,7 +210,10 @@ CMutableTransaction::CMutableTransaction(const CTransaction& tx) : nVersion(tx.n
                                                                    bindingSig(tx.bindingSig), nType(tx.nType), collateralIn(tx.collateralIn), collateralPubkey(tx.collateralPubkey),
                                                                    pubKey(tx.pubKey), sigTime(tx.sigTime), ip(tx.ip), sig(tx.sig), benchmarkTier(tx.benchmarkTier),
                                                                    benchmarkSig(tx.benchmarkSig), benchmarkSigTime(tx.benchmarkSigTime), nUpdateType(tx.nUpdateType),
-                                                                   nFluxTxVersion(tx.nFluxTxVersion), P2SHRedeemScript(tx.P2SHRedeemScript)
+                                                                   nFluxTxVersion(tx.nFluxTxVersion), P2SHRedeemScript(tx.P2SHRedeemScript),
+                                                                   csappDeploymentId(tx.csappDeploymentId), csappOwner(tx.csappOwner),
+                                                                   csappSpecJson(tx.csappSpecJson), csappIp(tx.csappIp),
+                                                                   csappLockedAmount(tx.csappLockedAmount), csappSig(tx.csappSig)
 {
     
 }
@@ -244,7 +247,7 @@ void CTransaction::UpdateHash() const
 CTransaction::CTransaction() : nVersion(CTransaction::SPROUT_MIN_CURRENT_VERSION), fOverwintered(false), nVersionGroupId(0), nExpiryHeight(0), vin(), vout(), nLockTime(0),
                                valueBalance(0), vShieldedSpend(), vShieldedOutput(), vJoinSplit(), joinSplitPubKey(), joinSplitSig(), bindingSig(), nType(FLUXNODE_NO_TYPE),
                                collateralIn(), collateralPubkey(), pubKey(), sigTime(0), ip(), sig(), benchmarkTier(0), benchmarkSig(), benchmarkSigTime(0), nUpdateType(0),
-                               nFluxTxVersion(0), P2SHRedeemScript()  { }
+                               nFluxTxVersion(0), P2SHRedeemScript(), csappDeploymentId(), csappOwner(), csappSpecJson(), csappIp(), csappLockedAmount(0), csappSig()  { }
 
 CTransaction::CTransaction(const CMutableTransaction &tx) : nVersion(tx.nVersion), fOverwintered(tx.fOverwintered), nVersionGroupId(tx.nVersionGroupId), nExpiryHeight(tx.nExpiryHeight),
                                                             vin(tx.vin), vout(tx.vout), nLockTime(tx.nLockTime),
@@ -253,7 +256,10 @@ CTransaction::CTransaction(const CMutableTransaction &tx) : nVersion(tx.nVersion
                                                             bindingSig(tx.bindingSig), nType(tx.nType), collateralIn(tx.collateralIn), collateralPubkey(tx.collateralPubkey),
                                                             pubKey(tx.pubKey), sigTime(tx.sigTime), ip(tx.ip), sig(tx.sig), benchmarkTier(tx.benchmarkTier),
                                                             benchmarkSig(tx.benchmarkSig), benchmarkSigTime(tx.benchmarkSigTime), nUpdateType(tx.nUpdateType),
-                                                            nFluxTxVersion(tx.nFluxTxVersion), P2SHRedeemScript(tx.P2SHRedeemScript)
+                                                            nFluxTxVersion(tx.nFluxTxVersion), P2SHRedeemScript(tx.P2SHRedeemScript),
+                                                            csappDeploymentId(tx.csappDeploymentId), csappOwner(tx.csappOwner),
+                                                            csappSpecJson(tx.csappSpecJson), csappIp(tx.csappIp),
+                                                            csappLockedAmount(tx.csappLockedAmount), csappSig(tx.csappSig)
 {
     UpdateHash();
 }
@@ -271,7 +277,10 @@ CTransaction::CTransaction(
                               ip(tx.ip), sig(tx.sig), benchmarkTier(tx.benchmarkTier),
                               benchmarkSig(tx.benchmarkSig), benchmarkSigTime(tx.benchmarkSigTime),
                               nUpdateType(tx.nUpdateType), nFluxTxVersion(tx.nFluxTxVersion),
-                              P2SHRedeemScript(tx.P2SHRedeemScript)
+                              P2SHRedeemScript(tx.P2SHRedeemScript),
+                              csappDeploymentId(tx.csappDeploymentId), csappOwner(tx.csappOwner),
+                              csappSpecJson(tx.csappSpecJson), csappIp(tx.csappIp),
+                              csappLockedAmount(tx.csappLockedAmount), csappSig(tx.csappSig)
 {
     assert(evilDeveloperFlag);
 }
@@ -286,7 +295,10 @@ CTransaction::CTransaction(CMutableTransaction &&tx) : nVersion(tx.nVersion), fO
                                                        pubKey(tx.pubKey), sigTime(tx.sigTime), ip(tx.ip),
                                                        sig(tx.sig), benchmarkTier(tx.benchmarkTier), benchmarkSig(tx.benchmarkSig),
                                                        benchmarkSigTime(tx.benchmarkSigTime), nUpdateType(tx.nUpdateType), nFluxTxVersion(tx.nFluxTxVersion),
-                                                       P2SHRedeemScript(tx.P2SHRedeemScript)
+                                                       P2SHRedeemScript(tx.P2SHRedeemScript),
+                                                       csappDeploymentId(tx.csappDeploymentId), csappOwner(tx.csappOwner),
+                                                       csappSpecJson(tx.csappSpecJson), csappIp(tx.csappIp),
+                                                       csappLockedAmount(tx.csappLockedAmount), csappSig(std::move(tx.csappSig))
 {
     UpdateHash();
 }
@@ -325,6 +337,13 @@ CTransaction& CTransaction::operator=(const CTransaction &tx) {
     *const_cast<int32_t*>(&nFluxTxVersion) = tx.nFluxTxVersion;
     *const_cast<CScript*>(&P2SHRedeemScript) = tx.P2SHRedeemScript;
 
+    // CSApp tx data
+    *const_cast<std::string*>(&csappDeploymentId) = tx.csappDeploymentId;
+    *const_cast<std::string*>(&csappOwner) = tx.csappOwner;
+    *const_cast<std::string*>(&csappSpecJson) = tx.csappSpecJson;
+    *const_cast<std::string*>(&csappIp) = tx.csappIp;
+    *const_cast<CAmount*>(&csappLockedAmount) = tx.csappLockedAmount;
+    *const_cast<std::vector<unsigned char>*>(&csappSig) = tx.csappSig;
 
     return *this;
 }
