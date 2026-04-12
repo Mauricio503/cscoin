@@ -55,7 +55,7 @@ bool FluxnodeConfig::read(std::string& strErr)
             iss.str(line);
             iss.clear();
             if (!(iss >> alias >> ip >> privKey >> txHash >> outputIndex)) {
-                strErr = _("Could not parse zelnode.conf") + "\n" +
+                strErr = _("Could not parse csnode.conf") + "\n" +
                          strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"";
                 streamConfig.close();
                 return false;
@@ -75,15 +75,22 @@ bool FluxnodeConfig::read(std::string& strErr)
 
         int defaultPort = Params().GetDefaultPort();
         if (Params().NetworkID() == CBaseChainParams::MAIN) {
-            if (port != defaultPort) {
-                strErr = _("Invalid port detected in zelnode.conf") + "\n" +
+            // Valid mainnet ports: 26125, 26135, 26145, ..., 26195
+            // (base port + slot * 10, up to 8 nodes per public IP)
+            bool validPort = (port >= defaultPort &&
+                              port <= defaultPort + 70 &&
+                              (port - defaultPort) % 10 == 0);
+            if (!validPort) {
+                strErr = _("Invalid port detected in csnode.conf") + "\n" +
                          strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
-                         strprintf(_("(must be %d for mainnet)"), defaultPort);
+                         strprintf(_("(must be %d to %d, multiples of 10, for mainnet)"), defaultPort, defaultPort + 70);
                 streamConfig.close();
                 return false;
             }
-        } else if (port == Params(CBaseChainParams::MAIN).GetDefaultPort()) {
-            strErr = _("Invalid port detected in zelnode.conf") + "\n" +
+        } else if (port >= Params(CBaseChainParams::MAIN).GetDefaultPort() &&
+                   port <= Params(CBaseChainParams::MAIN).GetDefaultPort() + 70 &&
+                   (port - Params(CBaseChainParams::MAIN).GetDefaultPort()) % 10 == 0) {
+            strErr = _("Invalid port detected in csnode.conf") + "\n" +
                      strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
                      strprintf(_("(%d can only be used on mainnet)"), port);
             streamConfig.close();

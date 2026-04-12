@@ -135,10 +135,10 @@ bool AppInit(int argc, char* argv[])
             return false;
         }
 
-        // parse zelnode.conf
+        // parse csnode.conf
         std::string strErr;
         if (!fluxnodeConfig.read(strErr)) {
-            fprintf(stderr, "Error reading zelnode configuration file: %s\n", strErr.c_str());
+            fprintf(stderr, "Error reading csnode configuration file: %s\n", strErr.c_str());
             return false;
         }
 
