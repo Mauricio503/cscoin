@@ -220,10 +220,8 @@ UniValue registercsapp(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
     CReserveKey reservekey(pwalletMain);
     CWalletTx walletTx(pwalletMain, tx);
-    CValidationState state;
-    if (!pwalletMain->CommitTransaction(walletTx, reservekey, &state))
-        throw JSONRPCError(RPC_WALLET_ERROR,
-            "CommitTransaction failed: " + state.GetRejectReason());
+    if (!pwalletMain->CommitTransaction(walletTx, reservekey))
+        throw JSONRPCError(RPC_WALLET_ERROR, "CommitTransaction failed for registercsapp");
 #endif
 
     UniValue ret(UniValue::VOBJ);
@@ -274,10 +272,8 @@ UniValue stopcsapp(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
     CReserveKey reservekey(pwalletMain);
     CWalletTx walletTx(pwalletMain, tx);
-    CValidationState state;
-    if (!pwalletMain->CommitTransaction(walletTx, reservekey, &state))
-        throw JSONRPCError(RPC_WALLET_ERROR,
-            "CommitTransaction failed: " + state.GetRejectReason());
+    if (!pwalletMain->CommitTransaction(walletTx, reservekey))
+        throw JSONRPCError(RPC_WALLET_ERROR, "CommitTransaction failed for stopcsapp");
 #endif
 
     UniValue ret(UniValue::VOBJ);
@@ -334,10 +330,8 @@ UniValue updatecsapp(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
     CReserveKey reservekey(pwalletMain);
     CWalletTx walletTx(pwalletMain, tx);
-    CValidationState state;
-    if (!pwalletMain->CommitTransaction(walletTx, reservekey, &state))
-        throw JSONRPCError(RPC_WALLET_ERROR,
-            "CommitTransaction failed: " + state.GetRejectReason());
+    if (!pwalletMain->CommitTransaction(walletTx, reservekey))
+        throw JSONRPCError(RPC_WALLET_ERROR, "CommitTransaction failed for updatecsapp");
 #endif
 
     UniValue ret(UniValue::VOBJ);
