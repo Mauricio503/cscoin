@@ -40,6 +40,7 @@
 #include "fluxnode/fluxnodecachedb.h"
 #include "fluxnode/obfuscation.h"
 #include "fluxnode/activefluxnode.h"
+#include "csapp/csapp.h"
 
 #include <sstream>
 
@@ -3108,6 +3109,10 @@ static DisconnectResult DisconnectBlock(const CBlock& block, CValidationState& s
             }
         }
 
+        // Undo CSApp transactions
+        if (tx.IsCSAppTx())
+            ProcessCSAppTransaction(tx, (uint32_t)pindex->nHeight, /*fUndo=*/true);
+
         // Check that all outputs are available and match the outputs in the block itself
         // exactly.
         {
@@ -3517,7 +3522,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                 }
             }
 
-            // are the JoinSplit's requirements met?
+            // Process CSApp transactions
+            if (tx.IsCSAppTx())
+                ProcessCSAppTransaction(tx, (uint32_t)pindex->nHeight);
             if (!view.HaveShieldedRequirements(tx))
                 return state.DoS(100, error("ConnectBlock(): JoinSplit requirements not met"),
                                  REJECT_INVALID, "bad-txns-joinsplit-requirements-not-met");

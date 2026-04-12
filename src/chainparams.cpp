@@ -296,7 +296,7 @@ public:
         pchMessageStart[3] = 0x74;
         vAlertPubKey = ParseHex("044b5cb8fd1db34e2d89a93e7becf3fb35dd08a81bb3080484365e567136403fd4a6682a43d8819522ae35394704afa83de1ef069a3104763fd0ebdbdd505a1386"); 
 
-        nDefaultPort = 26127;
+        nDefaultPort = 26128; // 26127 is reserved for cs-cloud node-agent (slot 1)
         nPruneAfterHeight = 1000;
 
         genesis = CreateGenesisBlock(

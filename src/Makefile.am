@@ -226,6 +226,7 @@ BITCOIN_CORE_H = \
   fluxnode/fluxnode.h \
   fluxnode/fluxnodeconfig.h \
   fluxnode/fluxnodecachedb.h \
+  csapp/csapp.h \
   zmq/zmqabstractnotifier.h \
   zmq/zmqconfig.h\
   zmq/zmqnotificationinterface.h \
@@ -287,6 +288,8 @@ libbitcoin_server_a_SOURCES = \
   fluxnode/fluxnode.cpp \
   fluxnode/fluxnodeconfig.cpp \
   fluxnode/fluxnodecachedb.cpp \
+  csapp/csapp.cpp \
+  rpc/csapp.cpp \
   $(BITCOIN_CORE_H) \
   $(LIBFLUX_H)
 

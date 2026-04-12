@@ -26,6 +26,11 @@
 #include "flux/JoinSplit.hpp"
 #include "flux/Proof.hpp"
 
+// CSApp transaction type constants (used by both transaction.h and csapp/csapp.h)
+static const int8_t CSAPP_REGISTER_TX_TYPE = 1;
+static const int8_t CSAPP_UPDATE_TX_TYPE   = 2;
+static const int8_t CSAPP_STOP_TX_TYPE     = 3;
+
 #define JOINSPLIT_SIZE GetSerializeSize(JSDescription(), SER_NETWORK, PROTOCOL_VERSION)
 #define OUTPUTDESCRIPTION_SIZE GetSerializeSize(OutputDescription(), SER_NETWORK, PROTOCOL_VERSION)
 #define SPENDDESCRIPTION_SIZE GetSerializeSize(SpendDescription(), SER_NETWORK, PROTOCOL_VERSION)
@@ -49,6 +54,9 @@ static const int32_t FLUXNODE_TX_UPGRADEABLE_VERSION = 6;
 
 static const int32_t FLUXNODE_INTERNAL_NORMAL_TX_VERSION = 1;
 static const int32_t FLUXNODE_INTERNAL_P2SH_TX_VERSION = 2;
+
+// CSApp transaction — stores decentralised app specs on-chain
+static const int32_t CSAPP_TX_VERSION = 7;
 
 /**
  * A shielded input to a transaction. It contains data that describes a Spend transfer.
@@ -606,6 +614,14 @@ public:
     const int32_t nFluxTxVersion; // Adding this field for further upgradability to fluxnode txes in the future
     const CScript P2SHRedeemScript;
 
+    // CSApp Tx Version 7 — decentralised app specs on-chain
+    const std::string csappDeploymentId;  // UUID of the deployment
+    const std::string csappOwner;         // CS address of the owner
+    const std::string csappSpecJson;      // AppSpec serialised as JSON (REGISTER/UPDATE only)
+    const std::string csappIp;            // Optional hint IP
+    const CAmount    csappLockedAmount;   // CSCOIN locked for billing (REGISTER only)
+    const std::vector<unsigned char> csappSig; // Owner signature
+
 
     /** Construct a CTransaction that qualifies as IsNull() */
     CTransaction();
@@ -707,6 +723,22 @@ public:
                 UpdateHash();
 
             return;
+        } else if (nVersion == CSAPP_TX_VERSION) {
+            READWRITE(*const_cast<int8_t*>(&nType));
+            READWRITE(*const_cast<std::string*>(&csappDeploymentId));
+            READWRITE(*const_cast<std::string*>(&csappOwner));
+            if (nType == CSAPP_REGISTER_TX_TYPE) {
+                READWRITE(*const_cast<std::string*>(&csappSpecJson));
+                READWRITE(*const_cast<std::string*>(&csappIp));
+                READWRITE(*const_cast<CAmount*>(&csappLockedAmount));
+            } else if (nType == CSAPP_UPDATE_TX_TYPE) {
+                READWRITE(*const_cast<std::string*>(&csappSpecJson));
+            }
+            if (!(s.GetType() & SER_GETHASH))
+                READWRITE(*const_cast<std::vector<unsigned char>*>(&csappSig));
+            if (ser_action.ForRead())
+                UpdateHash();
+            return;
         }
 
         READWRITE(*const_cast<std::vector<CTxIn>*>(&vin));
@@ -740,6 +772,10 @@ public:
 
     bool IsFluxnodeTx() const {
         return nVersion == FLUXNODE_TX_VERSION || nVersion == FLUXNODE_TX_UPGRADEABLE_VERSION;
+    }
+
+    bool IsCSAppTx() const {
+        return nVersion == CSAPP_TX_VERSION;
     }
 
     bool IsFluxnodeUpgradeTx() const {

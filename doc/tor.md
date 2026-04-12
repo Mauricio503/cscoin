@@ -44,11 +44,10 @@ reachable from the Tor network. Add these lines to your /etc/tor/torrc (or equiv
 config file):
 
 	HiddenServiceDir /var/lib/tor/cscoin-service/
-	HiddenServicePort 16125 127.0.0.1:16125
 	HiddenServicePort 26125 127.0.0.1:26125
 
-The directory can be different of course, but (both) port numbers should be equal to
-your csd's P2P listen port (16125 by default).
+The directory can be different of course, but the port number should be equal to
+your csd's P2P listen port (26125 by default).
 
 	-externalip=X   You can tell CS Coin about its publicly reachable address using
 	                this option, and this can be a .onion address. Given the above
@@ -83,7 +82,7 @@ as well, use `discover` instead:
 
 	./csd ... -discover
 
-and open port 16125 on your firewall (or use -upnp).
+and open port 26125 on your firewall (or use -upnp).
 
 If you only want to use Tor to reach onion addresses, but not use it as a proxy
 for normal IPv4/IPv6 communication, use:
