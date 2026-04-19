@@ -691,7 +691,7 @@ bool IsStandardTx(const CTransaction& tx, string& reason, const CChainParams& ch
 {
     bool saplingActive = NetworkUpgradeActive(nHeight, chainparams.GetConsensus(), Consensus::UPGRADE_ACADIA);
 
-    if (!tx.IsFluxnodeTx()) {
+    if (!tx.IsFluxnodeTx() && !tx.IsCSAppTx()) {
         if (saplingActive) {
             // Sapling standard rules apply
             if (tx.nVersion > CTransaction::SAPLING_MAX_CURRENT_VERSION ||
@@ -1012,7 +1012,7 @@ bool ContextualCheckTransaction(
         }
     }
 
-    if (!tx.IsFluxnodeTx()) {
+    if (!tx.IsFluxnodeTx() && !tx.IsCSAppTx()) {
         if (saplingActive) {
             // Reject transactions with valid version but missing overwintered flag
             if (tx.nVersion >= SAPLING_MIN_TX_VERSION && !tx.fOverwintered) {
@@ -1386,7 +1386,7 @@ bool CheckTransactionWithoutProofVerification(const CTransaction& tx, CValidatio
      *        0 <= tx.nVersion < OVERWINTER_MIN_TX_VERSION
      *        OVERWINTER_MAX_TX_VERSION < tx.nVersion <= INT32_MAX
      */
-    if (!tx.IsFluxnodeTx()) {
+    if (!tx.IsFluxnodeTx() && !tx.IsCSAppTx()) {
         if (!tx.fOverwintered && tx.nVersion < SPROUT_MIN_TX_VERSION) {
             return state.DoS(100, error("CheckTransaction(): version too low"),
                              REJECT_INVALID, "bad-txns-version-too-low");
@@ -1483,6 +1483,23 @@ bool CheckTransactionWithoutProofVerification(const CTransaction& tx, CValidatio
                                  REJECT_INVALID, "bad-txns-fluxnode-tx-invalid-update-type");
             }
         }
+    }
+
+    if (tx.IsCSAppTx() && (!tx.vout.empty() || !tx.vin.empty() || !tx.vJoinSplit.empty())) {
+        return state.DoS(10, error("CheckTransaction(): Is CSApp Tx, with non-empty vectors"),
+                         REJECT_INVALID, "bad-txns-csapp-tx-not-empty");
+    }
+
+    if (tx.IsCSAppTx()) {
+        if (tx.csappDeploymentId.empty())
+            return state.DoS(10, error("CheckTransaction(): CSApp Tx missing deploymentId"),
+                             REJECT_INVALID, "bad-txns-csapp-tx-no-deployment-id");
+        if (tx.csappOwner.empty())
+            return state.DoS(10, error("CheckTransaction(): CSApp Tx missing owner"),
+                             REJECT_INVALID, "bad-txns-csapp-tx-no-owner");
+        if (tx.nType != CSAPP_REGISTER_TX_TYPE && tx.nType != CSAPP_UPDATE_TX_TYPE && tx.nType != CSAPP_STOP_TX_TYPE)
+            return state.DoS(10, error("CheckTransaction(): CSApp Tx invalid nType"),
+                             REJECT_INVALID, "bad-txns-csapp-tx-invalid-type");
     }
 
     // Size limits
