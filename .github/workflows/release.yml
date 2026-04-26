@@ -73,6 +73,25 @@ jobs:
           sha256sum "${{ env.CSD_ASSET }}" > SHA256SUMS
           cat SHA256SUMS
 
+      - name: Checkout cs-cloud (node-agent)
+        uses: actions/checkout@v4
+        with:
+          repository: MauricioSpagnol/cs-cloud
+          path: cs-cloud
+
+      - name: Setup Python for node-agent wheel
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build node-agent wheel
+        run: |
+          pip install build
+          python -m build --wheel cs-cloud/node-agent/ --outdir dist/
+          WHEEL=$(ls dist/cs_cloud_node_agent-*.whl)
+          sha256sum "$WHEEL" >> SHA256SUMS
+          echo "AGENT_WHEEL=$WHEEL" >> $GITHUB_ENV
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -82,6 +101,7 @@ jobs:
 
             ### Assets
             - `csd-linux-amd64-v${{ steps.version.outputs.VERSION }}.tar.gz` — daemon + cs-cli + cs-tx
+            - `cs_cloud_node_agent-*.whl` — node-agent Python wheel
             - `SHA256SUMS` — checksums SHA256
 
             ### Instalação
@@ -89,6 +109,18 @@ jobs:
             Use `cs-mage update` para atualizar o daemon em um node já instalado.
           files: |
             ${{ env.CSD_ASSET }}
+            ${{ env.AGENT_WHEEL }}
             SHA256SUMS
           draft: false
           prerelease: false
+
+      - name: Trigger broadcast-update on all nodes
+        env:
+          MARKETPLACE_URL: ${{ secrets.MARKETPLACE_URL }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          curl -f -X POST "${MARKETPLACE_URL}/api/nodes/broadcast-update" \
+            -H "X-Admin-Token: ${ADMIN_TOKEN}" \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 5
